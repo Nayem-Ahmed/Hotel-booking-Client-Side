@@ -1,11 +1,9 @@
-
 import React, { useEffect, useState } from 'react';
 import Roomcard from './Roomcard';
 import Container from '../Shared/Container';
 import { useSearchParams } from 'react-router-dom';
 import Heading from './Heading';
 import Loader from '../Shared/Loader';
- 
 
 const Rooms = () => {
     const [rooms, setRooms] = useState([])

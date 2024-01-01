@@ -5,11 +5,10 @@ import qs from 'query-string'
 
 
 const CategorieiconBox = ({categorieiconbox,selected}) => {
-    const [params,setParams] = useSearchParams()
-    const navigate = useNavigate()
     const {label,icon:Icon,description} = categorieiconbox;
 
-    console.log(selected);
+    const [params,setParams] = useSearchParams()
+    const navigate = useNavigate()
 
     const handleclick= ()=>{
         let currentQuery = {}
