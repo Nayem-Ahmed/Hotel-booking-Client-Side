@@ -1,22 +1,34 @@
 import { Link } from 'react-router-dom'
 import { FcGoogle } from 'react-icons/fc'
 import axios from 'axios'
+import { useContext } from 'react'
+import { AuthContext } from '../../providers/AuthProvider'
 
 const SignUp = () => {
+  const {createUser,updateUserProfile,signInWithGoogle} = useContext(AuthContext)
   const handleSubmit = async (e)=>{
     e.preventDefault()
     const name = e.target.name.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
     const image = e.target.image.files[0];
-
     const formDataToSend = new FormData();
     formDataToSend.append('image', image);
-    try{
-
-      const {data} = await axios.post(`https://api.imgbb.com/1/upload?key=${import.meta.env.  VITE_IMAGEBB_API}`, formDataToSend)
+    try {
+      const { data } = await axios.post(`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMAGEBB_API}`, formDataToSend);
       console.log(data);
-    }catch (error) {
+
+      // Create user and get the user ID
+      const { user: newUser } = await createUser(email, password);
+
+      // Update user profile with the provided name and image URL
+      await updateUserProfile(newUser.uid, name, data?.data?.url);
+
+      // save user data in Database
+    
+      // 
+
+    } catch (error) {
       console.error('Error uploading image:', error);
     }
     
@@ -25,8 +37,8 @@ const SignUp = () => {
     <div className='flex justify-center items-center min-h-screen'>
       <div className='flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-100 text-gray-900'>
         <div className='mb-8 text-center'>
-          <h1 className='my-3 text-4xl font-bold'>Sign Up</h1>
-          <p className='text-sm text-gray-400'>Welcome to StayVista</p>
+          <h1 className='my-3 text-4xl font-bold '>Sign Up</h1>
+          <p className='text-sm text-gray-400 animate-ping'>Welcome to StayVista</p>
         </div>
         <form onSubmit={handleSubmit}
           noValidate=''
