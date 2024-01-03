@@ -2,7 +2,8 @@ import { Link } from 'react-router-dom'
 import { FcGoogle } from 'react-icons/fc'
 import { imgUpload } from '../../Api/utils'
 import useAuth from '../../hooks/useAuth'
-import { saveUser } from '../../Api/auth'
+import { getToken, saveUser } from '../../Api/auth'
+import toast from 'react-hot-toast'
 
 const SignUp = () => {
   const { createUser, updateUserProfile, signInWithGoogle } = useAuth()
@@ -31,10 +32,12 @@ const SignUp = () => {
       const dbResponse = await saveUser(newUser?.user)
       console.log(dbResponse);
       // get token
-      
+      await getToken(newUser?.user?.email)
+      toast('Sign Up successfull')
 
     } catch (error) {
       console.error('Error uploading image:', error);
+      toast(error.message)
     }
 
 
