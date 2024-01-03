@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FcGoogle } from 'react-icons/fc'
 import useAuth from '../../hooks/useAuth'
 import { getToken } from '../../Api/auth'
@@ -6,6 +6,8 @@ import toast from 'react-hot-toast'
 
 const Login = () => {
   const { signIn, signInWithGoogle,loading } = useAuth()
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -18,6 +20,7 @@ const Login = () => {
       // get token
       await getToken(newUser?.user?.email)
       toast('Sign Up successfull')
+       navigate(location?.state ? location.state : '/login');
 
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -38,6 +41,7 @@ const Login = () => {
       // get token
       await getToken(newUser?.user?.email)
       toast('Login successfull')
+      navigate(location?.state ? location.state : '/login');
 
     } catch (error) {
       console.error('Error uploading image:', error);
