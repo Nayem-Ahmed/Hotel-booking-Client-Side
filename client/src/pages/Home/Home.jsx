@@ -3,6 +3,8 @@
 import { Helmet } from "react-helmet-async"
 import Categories from "../../components/Rooms/Categories"
 import Rooms from "../../components/Rooms/Rooms"
+import ScrollToTopButton from "../../components/Button/ScrollToTopButton"
+
 
 
 const Home = () => {
@@ -11,7 +13,7 @@ const Home = () => {
       <Helmet><title>StayVista | Vacation Homes & Condo Rentals</title></Helmet> 
      <Categories></Categories>
      <Rooms></Rooms>
-
+    <ScrollToTopButton></ScrollToTopButton>
     </div>
   )
 }

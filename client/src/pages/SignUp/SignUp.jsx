@@ -1,37 +1,61 @@
 import { Link } from 'react-router-dom'
 import { FcGoogle } from 'react-icons/fc'
-import axios from 'axios'
-import { useContext } from 'react'
-import { AuthContext } from '../../providers/AuthProvider'
+import { imgUpload } from '../../Api/utils'
+import useAuth from '../../hooks/useAuth'
+import { saveUser } from '../../Api/auth'
 
 const SignUp = () => {
-  const {createUser,updateUserProfile,signInWithGoogle} = useContext(AuthContext)
-  const handleSubmit = async (e)=>{
+  const { createUser, updateUserProfile, signInWithGoogle } = useAuth()
+  const handleSubmit = async (e) => {
     e.preventDefault()
     const name = e.target.name.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
     const image = e.target.image.files[0];
-    const formDataToSend = new FormData();
-    formDataToSend.append('image', image);
+    // const formDataToSend = new FormData();
+    // formDataToSend.append('image', image);
+
     try {
-      const { data } = await axios.post(`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMAGEBB_API}`, formDataToSend);
-      console.log(data);
+      const imageData = await imgUpload(image)
+      console.log(imageData);
+      // from component utils.js
+       
 
       // Create user and get the user ID
-      const { user: newUser } = await createUser(email, password);
+      const  newUser = await createUser(email, password);
 
       // Update user profile with the provided name and image URL
-      await updateUserProfile(newUser.uid, name, data?.data?.url);
+      await updateUserProfile(newUser.uid, name, imageData?.data?.url);
 
       // save user data in Database
-    
-      // 
+      const dbResponse = await saveUser(newUser?.user)
+      console.log(dbResponse);
+      // get token
+      
 
     } catch (error) {
       console.error('Error uploading image:', error);
     }
-    
+
+
+    // try {
+    //   const { data } = await axios.post(`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMAGEBB_API}`, formDataToSend);
+    //   console.log(data);
+
+    //   // Create user and get the user ID
+    //   const { user: newUser } = await createUser(email, password);
+
+    //   // Update user profile with the provided name and image URL
+    //   await updateUserProfile(newUser.uid, name, data?.data?.url);
+
+    //   // save user data in Database
+
+    //   // 
+
+    // } catch (error) {
+    //   console.error('Error uploading image:', error);
+    // }
+
   }
   return (
     <div className='flex justify-center items-center min-h-screen'>
