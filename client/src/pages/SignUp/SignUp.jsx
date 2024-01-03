@@ -4,9 +4,10 @@ import { imgUpload } from '../../Api/utils'
 import useAuth from '../../hooks/useAuth'
 import { getToken, saveUser } from '../../Api/auth'
 import toast from 'react-hot-toast'
+import { FaSpinner } from 'react-icons/fa'
 
 const SignUp = () => {
-  const { createUser, updateUserProfile, signInWithGoogle } = useAuth()
+  const { createUser, updateUserProfile, signInWithGoogle,loading } = useAuth()
   const handleSubmit = async (e) => {
     e.preventDefault()
     const name = e.target.name.value;
@@ -21,12 +22,11 @@ const SignUp = () => {
       console.log(imageData);
       // from component utils.js
        
-
       // Create user and get the user ID
       const  newUser = await createUser(email, password);
 
       // Update user profile with the provided name and image URL
-      await updateUserProfile(newUser.uid, name, imageData?.data?.url);
+      await updateUserProfile(name, imageData?.data?.url);
 
       // save user data in Database
       const dbResponse = await saveUser(newUser?.user)
@@ -58,6 +58,28 @@ const SignUp = () => {
     // } catch (error) {
     //   console.error('Error uploading image:', error);
     // }
+
+  }
+
+  const handleGoogleLogin = async () => {
+     try {
+     
+      // Create user and get the user ID
+      const  newUser = await signInWithGoogle();
+ 
+      // save user data in Database
+      const dbResponse = await saveUser(newUser?.user)
+      console.log(dbResponse);
+      // get token
+      await getToken(newUser?.user?.email)
+      toast('Sign Up successfull')
+
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast(error.message)
+    }
+
+ 
 
   }
   return (
@@ -135,7 +157,7 @@ const SignUp = () => {
               type='submit'
               className='bg-rose-500 w-full rounded-md py-3 text-white'
             >
-              Continue
+             {loading ? <FaSpinner className='animate-spin text-center mx-auto'></FaSpinner> : 'Continue'}
             </button>
           </div>
         </form>
@@ -146,7 +168,7 @@ const SignUp = () => {
           </p>
           <div className='flex-1 h-px sm:w-16 dark:bg-gray-700'></div>
         </div>
-        <div className='flex justify-center items-center space-x-2 border m-3 p-2 border-gray-300 border-rounded cursor-pointer'>
+        <div onClick={handleGoogleLogin} className='flex justify-center items-center space-x-2 border m-3 p-2 border-gray-300 border-rounded cursor-pointer'>
           <FcGoogle size={32} />
 
           <p>Continue with Google</p>

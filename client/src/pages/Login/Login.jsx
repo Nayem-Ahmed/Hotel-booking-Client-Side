@@ -1,7 +1,15 @@
 import { Link } from 'react-router-dom'
 import { FcGoogle } from 'react-icons/fc'
+import useAuth from '../../hooks/useAuth'
 
 const Login = () => {
+  const{signIn}=useAuth();
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    signIn(email,password)
+  }
   return (
     <div className='flex justify-center items-center min-h-screen'>
       <div className='flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-100 text-gray-900'>
