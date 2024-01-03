@@ -1,14 +1,51 @@
 import { Link } from 'react-router-dom'
 import { FcGoogle } from 'react-icons/fc'
 import useAuth from '../../hooks/useAuth'
+import { getToken } from '../../Api/auth'
+import toast from 'react-hot-toast'
 
 const Login = () => {
-  const{signIn}=useAuth();
+  const { signIn, signInWithGoogle,loading } = useAuth()
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     const email = e.target.email.value;
     const password = e.target.password.value;
-    signIn(email,password)
+
+    try {
+      const  newUser = await signIn(email, password);
+
+      // get token
+      await getToken(newUser?.user?.email)
+      toast('Sign Up successfull')
+
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast(error.message)
+    }
+
+  }
+
+  const handleGoogleLogin = async () => {
+     try {
+     
+      // Create user and get the user ID
+      const  newUser = await signInWithGoogle();
+ 
+      // save user data in Database
+      const dbResponse = await saveUser(newUser?.user)
+      console.log(dbResponse);
+      // get token
+      await getToken(newUser?.user?.email)
+      toast('Login successfull')
+
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      toast(error.message)
+    }
+
+ 
+
   }
   return (
     <div className='flex justify-center items-center min-h-screen'>
@@ -19,7 +56,7 @@ const Login = () => {
             Sign in to access your account
           </p>
         </div>
-        <form
+        <form onSubmit={handleSubmit}
           noValidate=''
           action=''
           className='space-y-6 ng-untouched ng-pristine ng-valid'
@@ -78,7 +115,7 @@ const Login = () => {
           </p>
           <div className='flex-1 h-px sm:w-16 dark:bg-gray-700'></div>
         </div>
-        <div className='flex justify-center items-center space-x-2 border m-3 p-2 border-gray-300 border-rounded cursor-pointer'>
+        <div onClick={handleGoogleLogin} className='flex justify-center items-center space-x-2 border m-3 p-2 border-gray-300 border-rounded cursor-pointer'>
           <FcGoogle size={32} />
 
           <p>Continue with Google</p>
